@@ -35,7 +35,7 @@ std::vector<char> elem =            {'*',
 
 
 
-void decoder(std::string message){
+void decoder1(std::string message){
 
 
     std::ifstream audio;
@@ -95,6 +95,71 @@ void decoder(std::string message){
     }
 
     std::cout << std::endl;
+void decoder2(std::string message){
+
+    std::ofstream texte;
+    std::string::size_type const p(message.find_last_of('.'));
+    std::string mess = message.substr(0, p);
+    texte.open((mess+".txt"), std::ios::binary);  // on crée un fichier texte pour mettre le résultat
+
+    std::ifstream audio;
+    audio.open(message, std::ios::binary);
+    char entete[44];    
+    audio.read(entete, 44);    
+
+    int8_t lu;
+    int ia = -1;        // indice pour tab_alphabet
+
+    while(!audio.eof()){
+
+        int ie = 0;     // indice pour elem
+        while(elem[ie] == '*'){
+            int s = 0; 
+            for(int i=0; i<N; i++){
+                audio.read(reinterpret_cast<char*>(&lu), 1);
+                if(lu > 1){
+                    s += 1;
+                }
+            }
+            if(s > N/4){
+                ie = ie*2 + 1;   // "bruit", on va à gauche
+            }
+            else{
+                ie = ie*2 + 2;  // silence, on va à droite
+            } 
+        }
+
+        if (ia == -1){   
+            if (elem[ie] == 'f'){
+                ia = 0;
+            }
+            if (elem[ie] == 'p'){
+                ia = 1;
+            }
+            if (elem[ie] == 't'){
+                ia = 2;
+            }
+        }
+        else if (ia >= tab_alphabet.size()){
+            texte << "*";     // erreur dans le morse (ou élément non pris en compte), on met * ce qui ne devrait pas empécher la compréhension du reste du texte)
+        }
+        else {
+            if (elem[ie] == 'p'){
+                ia = ia*2 + 1;    // on va à gauche
+            }
+            if (elem[ie] == 't'){
+                ia = ia*2 + 2;    // on va à droite
+            }
+            if (elem[ie] == 'f'){
+                texte << tab_alphabet[ia];    // On écrit le caractère obtenu dans le fichier
+                ia = -1;                      // puis on réinitialise ia
+            }        
+        }
+
+    }
+
+
     audio.close();
+    texte.close();
 
 }

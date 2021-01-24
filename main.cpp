@@ -8,13 +8,13 @@ int main(){
 
     std::string mode;      // mode = 1 pour français -> morse, mode = 2 pour morse -> français
     std::string message;   // contiendra l'argument de la fonction appelée (un nom de fichier ou une chaine de caractères à coder)
+    std::string choix;     
 
     std::cout << "Voulez-vous coder (1) ou décoder (2) un message ?" << std::endl; 
     std::cin >> mode;
 
     if(mode[0] == '1'){
         std::cout << "Voulez-vous entrer votre message directement (1) ou utiliser un fichier (2) ?" << std::endl;
-        std::string choix;
         std::cin >> choix;
         if(choix[0] == '1'){
             std::cout << "Veuillez écrire votre message" << std::endl;
@@ -32,7 +32,14 @@ int main(){
     else if(mode[0] == '2'){
         std::cout << "Quel fichier voulez-vous décoder ?" << std::endl;
         std::cin >> message;
-        decoder(message);
+        std::cout << "Voulez-vous afficher le texte obtenu (1) ou l'enregistrer dans un fichier (2) ?" << std::endl;
+        std::cin >> choix;
+        if(choix[0] == '1'){
+            decoder1(message);
+        }
+        else if(choix[0] == '2'){
+            decoder2(message);
+        }
     }
 
 

@@ -5,23 +5,23 @@
 #include <map>
 #include <string>
 
-/* Les paramètres */
+    /* Les paramètres */
 
 std::ofstream audio;
 
     const double two_pi = 6.2831853;
     const double amplitude = 100;  // "volume"
 
-    double hz_c = 44000;         // samples par seconde
+    double hz_c = 44000;       // samples par seconde
     double freqt = 440;       // la 440
     double freqp = 440*4/3;  // on fait les points plus aigus que les tirets "pour faire joli"
-    double tau_c = 0.25;      // durée d'un point
+    double tau_c = 0.25;    // durée d'un point
 
-    int N_c = hz_c * tau_c;     // nombre de samples pour un point
+    int N_c = hz_c * tau_c;   // nombre de samples pour un point
 
 
 
-/* Pour l'écriture du fichier en binaire */
+    /* Pour l'écriture du fichier en binaire */
 
 namespace little_endian_io
 {
@@ -38,7 +38,7 @@ using namespace little_endian_io;
 
 void ecrit(std::vector<int> liste){
     for(int i=0; i<liste.size(); i++){
-    write_word(audio, (int) liste[i], 1);
+        write_word(audio, (int) liste[i], 1);
     }
 }
 
@@ -56,12 +56,12 @@ void Alphabet(){
     for (int n=0; n<N_c; n++) {
         double value = sin((two_pi*n*freqp)/hz_c);
         point[n] = amplitude * value;
-        }
+    }
 
     for (int n=0; n<3*N_c; n++) {
         double value = sin((two_pi*n*freqt)/hz_c);
         tiret[n] = amplitude * value;
-        }
+    }
         
 
     alphabet['a'] = {point, tiret, silence} ;
@@ -139,12 +139,15 @@ void Alphabet(){
     alphabet['\''] = {point, tiret, tiret, tiret, tiret, point, silence};
 
     alphabet[' '] = {silence, silence};
-    alphabet['\n'] = {silence, silence}; 
+    alphabet['\n'] = {silence, silence};    // Je crois que celui-là ne sert jamais, mais dans le doute...
 
 }
 
 
+
 void coder1(std::string message){
+
+        /* Entete du fichier .wav */
 
     audio.open("en_morse.wav", std::ios::binary);  
     audio << "RIFF____WAVEfmt ";
@@ -158,7 +161,10 @@ void coder1(std::string message){
     size_t data_chunk_pos = audio.tellp();
     audio << "data____";
 
-    Alphabet();
+
+    Alphabet();      // On rempli le dictionnaire du code morse
+
+        /* Traduction du message en morse audio */
 
     for(auto x : message){
         for(auto y : alphabet[x]){
@@ -166,6 +172,7 @@ void coder1(std::string message){
         }
     }
 
+        /* On met les bonnes valeurs pour les tailles dans l'entete */
 
     size_t taille = audio.tellp();
     audio.seekp(0 + 4);
@@ -173,16 +180,18 @@ void coder1(std::string message){
     audio.seekp(data_chunk_pos + 4);
     write_word(audio, taille - data_chunk_pos + 8, 4);
     audio.close();
-
     
 }
+
+
+
 
 void coder2(std::string message){  // ici, message contient le chemin vers un fichier
 
     std::string::size_type const p(message.find_last_of('.'));
     std::string mess = message.substr(0, p);
-
-    audio.open((mess+".wav"), std::ios::binary);  // on crée un fichier correspondant
+    audio.open((mess+".wav"), std::ios::binary);  // on crée un fichier audio pour mettre le résultat
+    
     audio << "RIFF____WAVEfmt ";
     write_word(audio, 16,4);     // Subchunk1Size 
     write_word(audio, 1, 2);     // AudioFormat (non compréssé)
@@ -194,13 +203,13 @@ void coder2(std::string message){  // ici, message contient le chemin vers un fi
     size_t data_chunk_pos = audio.tellp();
     audio << "data____";
 
+
     Alphabet();
 
     std::ifstream texte;
     texte.open(message);
     std::string a;
     while(!texte.eof()){
-
         std::getline(texte, a);
         for(auto x : a){
             for(auto y : alphabet[x]){
@@ -212,6 +221,7 @@ void coder2(std::string message){  // ici, message contient le chemin vers un fi
     }
     texte.close();
 
+
     size_t taille = audio.tellp();
     audio.seekp(0 + 4);
     write_word(audio, taille - 8, 4);
@@ -219,5 +229,4 @@ void coder2(std::string message){  // ici, message contient le chemin vers un fi
     write_word(audio, taille - data_chunk_pos + 8, 4);
     audio.close();
 
-    
 }

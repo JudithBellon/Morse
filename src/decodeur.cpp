@@ -3,15 +3,15 @@
 #include <vector>
 #include <string>
 
-/* Les paramètres, à éventuellement modifier s'ils ne correspondent pas au fichier à décoder */
+    /* Les paramètres, à éventuellement modifier s'ils ne correspondent pas au fichier à décoder */
 
-double hz = 44000;         // samples par seconde
-double tau = 0.25;        // durée d'un point
+double hz = 44000;    // samples par seconde
+double tau = 0.25;   // durée d'un point
 int N = hz * tau; 
 
 
-/* Représentation sous forme de tableau de l'arbre binaire du morse */
-     // on va à gauche pour un point et à droite pour un tiret.
+    /* Représentation sous forme de tableau de l'arbre binaire du morse */
+        // on va à gauche pour un point et à droite pour un tiret.
 
 std::vector<char> tab_alphabet =                                                                                                                                  {' ', 
                                                                                 'e',                                                                                                                                                          't',
@@ -23,8 +23,8 @@ std::vector<char> tab_alphabet =                                                
 
 
 
-/* Représentation sous forme de tableau de l'arbre binaire dans lequel on va à gauche quand il y a "du bruit" et à droite lors d'un silence */
-      // p = point, t = tiret, f = fin de lettre
+    /* Représentation sous forme de tableau de l'arbre binaire dans lequel on va à gauche quand il y a "du bruit" et à droite lors d'un silence */
+        // p = point, t = tiret, f = fin de lettre
 
 std::vector<char> elem =            {'*',
                     '*',                                   '*',
@@ -44,12 +44,11 @@ void decoder(std::string message){
     audio.read(entete, 44);   
 
     int8_t lu;
-    int ia = -1;      // indice pour tab_alphabet
+    int ia = -1;        // indice pour tab_alphabet
 
     while(!audio.eof()){
 
-        int ie = 0;   // indice pour elem
-
+        int ie = 0;     // indice pour elem
         while(elem[ie] == '*'){
             int s = 0; 
             for(int i=0; i<N; i++){
@@ -88,8 +87,8 @@ void decoder(std::string message){
                 ia = ia*2 + 2;    // on va à droite
             }
             if (elem[ie] == 'f'){
-                std::cout << tab_alphabet[ia];
-                ia = -1;
+                std::cout << tab_alphabet[ia];    // On affiche le caractère obtenu
+                ia = -1;                          // puis on réinitialise ia
             }        
         }
 

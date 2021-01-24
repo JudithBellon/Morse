@@ -5,7 +5,7 @@ Pour utiliser ce programme de codage/décodage de Morse, il suffit de :
 * lancer le programme avec `./morse`
 * suivre les instructions :
   * pour coder un message en morse, entrer 1 puis
-    * 1 pour entrer le message directement. Le résultat se trouvera alors dans le fichier `en_morse.wav`. (A titre d'exemple, il contient au départ le message "Hello world")
+    * 1 pour entrer le message directement. Le résultat se trouvera alors dans le fichier `en_morse.wav`. (A titre d'exemple, il contient au départ le message "Vive le morse !")
     * 2 pour donner au programme le chemin vers un fichier texte. On trouvera alors le résultat dans un fichier de même nom (et même chemin d'accès), mais d'extension `.wav`.
   * pour décoder un message du morse vers le français, entrer 2, puis le chemin vers le fichier son à décoder.
 

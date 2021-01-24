@@ -12,9 +12,8 @@ std::ofstream audio;
     const double two_pi = 6.2831853;
     const double amplitude = 100;  // "volume"
 
-    double hz_c = 44000;       // samples par seconde
-    double freqt = 440;       // la 440
-    double freqp = 440*4/3;  // on fait les points plus aigus que les tirets "pour faire joli"
+    double freqt = 330;       
+    double freqp = 392;     // on fait les points plus aigus que les tirets "pour faire joli"
     double tau_c = 0.25;    // durée d'un point
 
     int N_c = hz_c * tau_c;   // nombre de samples pour un point

@@ -10,8 +10,9 @@
 std::ofstream audio;
 
     const double two_pi = 6.2831853;
-    const double amplitude = 100;  // "volume"
+    const double amplitude = 100;    // "volume"
 
+    double hz_c  = 44000;     // fréquence d'échantillonnage
     double freqt = 330;       
     double freqp = 392;     // on fait les points plus aigus que les tirets "pour faire joli"
     double tau_c = 0.25;    // durée d'un point
@@ -36,7 +37,7 @@ using namespace little_endian_io;
 
 
 void ecrit(std::vector<int> liste){
-    for(int i=0; i<liste.size(); i++){
+    for(unsigned int i=0; i<liste.size(); i++){
         write_word(audio, (int) liste[i], 1);
     }
 }
@@ -135,6 +136,8 @@ void Alphabet(){
     alphabet[':'] = {tiret, tiret, tiret, point, point, point, silence};
     alphabet[';'] = {tiret, point, tiret, point, tiret, point, silence};
     alphabet['-'] = {tiret, point, point, point, point, tiret, silence};
+    alphabet['('] = {tiret, point, tiret, tiret, point, silence};
+    alphabet[')'] = {tiret, point, tiret, tiret, point, tiret, silence};
     alphabet['\''] = {point, tiret, tiret, tiret, tiret, point, silence};
 
     alphabet[' '] = {silence, silence};
@@ -152,7 +155,7 @@ void coder1(std::string message){
     audio << "RIFF____WAVEfmt ";
     write_word(audio, 16,4);     // Subchunk1Size 
     write_word(audio, 1, 2);     // AudioFormat (non compréssé)
-    write_word(audio, 1, 2);     // NumChannels 
+    write_word(audio, 1, 2);     // NumChannels (mono)
     write_word(audio, 44000, 4); // SampleRate
     write_word(audio, 44000, 4); // ByteRate (SampleRate * NumChannels * BitsPerSample/8)
     write_word(audio, 1, 2);     // BlockAlign (NumChannels * BitsPerSample/8)
